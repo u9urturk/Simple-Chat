@@ -12,9 +12,11 @@ A simple chat application built with WebSocket and Node.js.
    ```bash
    git clone https://github.com/https://github.com/u9urturk/Simple-Chat.git
 2. Install dependencies:
-    cd simple-chat
-    npm install
+   ```bash
+   cd simple-chat
+   npm install
 
 
-3. Start the server:
-    npm start
+4. Start the server:
+   ``` bash
+   npm start
