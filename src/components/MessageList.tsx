@@ -1,18 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Message {
-    socketId: string;
+    uid: string;
     username: string;
+    name:string
     message: string;
     creationTime: string;
 }
 interface MessageListProps {
     messages: Message[];
-    socketId: string;
+    uid: string;
 }
 
 
-const MessageList: React.FC<MessageListProps> = ({ messages, socketId }) => {
+const MessageList: React.FC<MessageListProps> = ({ messages, uid }) => {
     const [isExpanded, setIsExpanded] = useState<Boolean>(false);
     const [key, setKey] = useState<Number>(0)
     const chatRef = useRef<HTMLDivElement | null>(null);
@@ -24,15 +25,19 @@ const MessageList: React.FC<MessageListProps> = ({ messages, socketId }) => {
         if (lastMessageRef.current && !showScrollToBottom) {
             lastMessageRef.current.scrollIntoView({ behavior: 'smooth' }); // Yumuşak kaydırma
         }
+       
     }, [messages]);
 
+ 
+    
 
     // Bildirimi kontrol etmek için
     useEffect(() => {
         const handleScroll = () => {
             if (chatRef.current) {
-                const isAtBottom = chatRef.current.scrollHeight - chatRef.current.scrollTop === chatRef.current.clientHeight;
-                setShowScrollToBottom(!isAtBottom);
+               
+                const heightScrollPercent = ((chatRef.current.scrollHeight - chatRef.current.scrollTop)/chatRef.current.clientHeight)*100;
+                setShowScrollToBottom(heightScrollPercent>130 ? true : false);
             }
         };
 
@@ -56,17 +61,15 @@ const MessageList: React.FC<MessageListProps> = ({ messages, socketId }) => {
         setKey(key);
         setIsExpanded(!isExpanded);
     };
-    console.log(messages)
-    console.log(socketId)
-
+  
     return (
         <>
             <div ref={chatRef} className="flex-grow relative   overflow-y-auto h-full p-4 space-y-4 bg-white border-t border-b border-gray-300">
 
                 {messages.map((msg, index) => (
-                    <div key={index} ref={index === messages.length - 1 ? lastMessageRef : null} className={`flex items-end ${msg.socketId === socketId ? "justify-end" : ""} : `}>
-                        <div className={`max-w-xs h-auto  flex-wrap flex flex-col  p-3 rounded-lg ${msg.socketId === socketId ? 'bg-gray-200 items-end text-gray-700' : 'bg-blue-500 items-start text-white'}`}>
-                            <div className={`font-semibold ${msg.socketId === socketId ? 'hidden' : ''}`}>{msg.username}</div>
+                    <div key={index} ref={index === messages.length - 1 ? lastMessageRef : null} className={`flex items-end ${msg.uid === uid ? "justify-end" : ""} : `}>
+                        <div className={`max-w-xs h-auto  flex-wrap flex flex-col  p-3 rounded-lg ${msg.uid === uid ? 'bg-gray-200 items-end text-gray-700' : 'bg-primaryColor items-start text-white'}`}>
+                            <div className={`font-semibold ${msg.uid === uid ? 'hidden' : ''}`}>{msg.name}</div>
 
                             {/* Mesajı belirli uzunlukta kesip "..." ile gösterme */}
                             <p className={`flex-wrap break-all ${isExpanded && key === index ? '' : 'line-clamp-2'}`}>
@@ -75,7 +78,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, socketId }) => {
 
                             {/* "Tamamını Göster" veya "Gizle" düğmesi */}
                             {msg.message.length > 100 && (
-                                <button className={`text-xs ${msg.socketId === socketId ? 'text-blue-500' : 'text-gray-300'}`} onClick={() => toggleMessageExpansion(index)}>
+                                <button className={`text-xs ${msg.uid === uid ? 'text-blue-500' : 'text-gray-300'}`} onClick={() => toggleMessageExpansion(index)}>
                                     {isExpanded ? 'Gizle' : 'Tamamını Göster'}
                                 </button>
                             )}

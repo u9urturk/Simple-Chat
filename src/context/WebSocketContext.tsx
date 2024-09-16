@@ -3,20 +3,20 @@ import { webSocketService } from '../services/webSocketService';
 
 // WebSocketContext için TypeScript arayüzü
 interface Message {
-    socketId:string;
+    uid:string;
     username:string;
+    name:string
     message:string;
     creationTime:string;
 }
 interface WebSocketContextType {
     sendMessage: (data: {
-        socketId:string
+        uid:string
         message:string
         creationTime:Date
     }) => void;
    
     messages:Message[];
-    socketId:string;
 }
 
 // WebSocketContext oluşturuluyor
@@ -25,17 +25,13 @@ const WebSocketContext = createContext<WebSocketContextType | undefined>(undefin
 // WebSocketProvider bileşeni
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [messages, setMessages] = useState<Message[]>([]);
-    const [socketId, setSocketId] = useState<string>("");
-
     useEffect(() => {
         // WebSocket bağlantısı kuruluyor
         webSocketService.connect();
-
         // WebSocket mesajlarını dinleyin
         webSocketService.onMessage((message) => {
             const parsedData = JSON.parse(message);
-            if (parsedData.type === "socketId") {
-                setSocketId(parsedData.uId);
+            if (parsedData.type === "any") {
             } else if (parsedData.type === "text") {
                 setMessages(prevMessages => [...prevMessages, parsedData.content]);
             }
@@ -54,7 +50,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
 
     return (
-        <WebSocketContext.Provider value={{ sendMessage, messages ,socketId}}>
+        <WebSocketContext.Provider value={{ sendMessage, messages }}>
             {children}
         </WebSocketContext.Provider>
     );

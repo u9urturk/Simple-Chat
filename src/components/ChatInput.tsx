@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 
 interface ChatInputProps {
-    socketId: string;
-    username:string;
+    uid: string;
+    username:string |undefined; 
 
     sendMessage: (data: {
-        socketId: string;
+        uid: string;
         message: string;
         creationTime:Date;
     }) => void;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ sendMessage, socketId,username }) => {
+const ChatInput: React.FC<ChatInputProps> = ({ sendMessage, uid,username }) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +22,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ sendMessage, socketId,username })
         e.preventDefault();
         if (inputValue.trim()) {
             const data = {
-                socketId: socketId,
+                uid: uid,
                 username:username,
                 message: inputValue,
                 creationTime:new Date()
@@ -37,13 +37,13 @@ const ChatInput: React.FC<ChatInputProps> = ({ sendMessage, socketId,username })
             <form onSubmit={handleSubmit} className="flex w-full items-center space-x-4">
                 <input
                     type="text"
-                    placeholder="Type your message..."
+                    placeholder="Mesajın ..."
                     value={inputValue}
                     onChange={handleChange}
-                    className="flex- w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex- w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primaryColor"
                 />
-                <button type="submit"  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-                    Send
+                <button type="submit"  className="bg-primaryColor text-white px-4 py-2 rounded-lg hover:bg-primaryColorVol2">
+                    Gönder
                 </button>
             </form>
         </footer>
